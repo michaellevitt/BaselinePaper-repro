@@ -1,0 +1,311 @@
+{
+ "_note": "Verified methods landscape for the baseline x age-band comparison table. ref = reference number in build_paper.js refs[]. Each entry's baseline/age/refperiod/scope confirmed from a fetched source (see literature sweep).",
+ "studies": [
+  {
+   "ref": 1,
+   "study": "WHO (Msemburi 2023)",
+   "family": "spline/Bayesian",
+   "baseline": "Negative-binomial spline on historical annual/monthly counts; overdispersed Poisson with covariates where data sparse",
+   "age": "all-ages (count models); no age-stratified output",
+   "refperiod": "pre-2020 historical",
+   "scope": "194 countries, 2020-21"
+  },
+  {
+   "ref": 2,
+   "study": "IHME (Wang 2022)",
+   "family": "ensemble",
+   "baseline": "Ensemble of 6 models (4 Bayesian spline variants + Poisson + 2019-level comparator), RMSE-weighted",
+   "age": "crude all-ages",
+   "refperiod": "2010-2020",
+   "scope": "191 countries + 252 subnat., 2020-21"
+  },
+  {
+   "ref": 3,
+   "study": "World Mortality Dataset (Karlinsky & Kobak 2021)",
+   "family": "linear trend",
+   "baseline": "Per-time-unit intercepts + linear yearly trend extrapolated from 2015-19",
+   "age": "crude all-ages",
+   "refperiod": "2015-2019",
+   "scope": "103 countries"
+  },
+  {
+   "ref": 4,
+   "study": "The Economist (2021)",
+   "family": "machine learning",
+   "baseline": "Gradient-boosted ML on 100+ country predictors, trained on WMD all-cause excess",
+   "age": "crude all-ages",
+   "refperiod": "implicit (WMD inputs)",
+   "scope": "all countries/territories"
+  },
+  {
+   "ref": 5,
+   "study": "Levitt, Zonta & Ioannidis multiverse (2023)",
+   "family": "trend / reference sweep",
+   "baseline": "Age-stratified linear rate-trend; sweeps all consecutive-year reference sets 2009-19 x 1-4 yr horizons",
+   "age": "age-stratified (HMD detailed, annual)",
+   "refperiod": "all 2009-2019 combinations",
+   "scope": "33 countries"
+  },
+  {
+   "ref": 6,
+   "study": "Nepomuceno (2022)",
+   "family": "sensitivity / comparison",
+   "baseline": "4 methods compared: specific-average; specific-average+trend; harmonic; harmonic+trend (weekly & monthly)",
+   "age": "crude rate vs age-standardized (head-to-head)",
+   "refperiod": "2010-19 / 2015-19 / 2017-19",
+   "scope": "26 countries, 2020"
+  },
+  {
+   "ref": 7,
+   "study": "Aron & Muellbauer / OWID P-score",
+   "family": "historical average",
+   "baseline": "P-score vs same-week 5-yr average; cumulative P-score",
+   "age": "crude all-ages (+ some bands; age-std discussed)",
+   "refperiod": "2015-2019",
+   "scope": "cross-country framework"
+  },
+  {
+   "ref": 8,
+   "study": "Acosta & Irizarry (2022)",
+   "family": "GAM / spline",
+   "baseline": "Spline trend + harmonic seasonality + day-of-week, overdispersed Poisson w/ serial corr (excessmort R pkg)",
+   "age": "by demographic strata (band count unclear)",
+   "refperiod": "user-chosen control period",
+   "scope": "method (US/PR demos)"
+  },
+  {
+   "ref": 9,
+   "study": "Islam (2021)",
+   "family": "Poisson time-series",
+   "baseline": "Over-dispersed Poisson, temporal trend + seasonality (weekly)",
+   "age": "5 bands (0-14,15-64,65-74,75-84,85+) by sex + age-std 2013 ESP",
+   "refperiod": "2016-2019",
+   "scope": "29 high-income countries, 2020"
+  },
+  {
+   "ref": 10,
+   "study": "Kontis (2020)",
+   "family": "Bayesian ensemble",
+   "baseline": "Ensemble of 16 Bayesian models (trend, seasonality, AR, temperature, holidays), INLA",
+   "age": "broad sex/age groups (~0-64 / 65+, finer where possible)",
+   "refperiod": "series to mid-Feb 2020",
+   "scope": "21 industrialized countries, first wave"
+  },
+  {
+   "ref": 11,
+   "study": "Shkolnikov (2022)",
+   "family": "baseline comparison",
+   "baseline": "4 baselines incl. novel 'lowest weekly rate' and 'within-year' baselines",
+   "age": "age-standardized death rates",
+   "refperiod": "2003-09 & 2013-19",
+   "scope": "35 countries, focus 2020"
+  },
+  {
+   "ref": 13,
+   "study": "STMF (Jdanov 2021)",
+   "family": "historical average",
+   "baseline": "Same-week average weekly death rate over 2015-19",
+   "age": "5 bands (0-14,15-64,65-74,75-84,85+) by sex",
+   "refperiod": "2015-2019",
+   "scope": "38 countries/areas, weekly"
+  },
+  {
+   "ref": 18,
+   "study": "Ioannidis, Zonta & Levitt PNAS (2023)",
+   "family": "trend",
+   "baseline": "Age-specific trend from 2017-19 reference",
+   "age": "5 age strata",
+   "refperiod": "2017-2019",
+   "scope": "34 countries, 2020-23"
+  },
+  {
+   "ref": 23,
+   "study": "GBD 2021 (2024)",
+   "family": "forecast residual",
+   "baseline": "All-cause excess = observed minus GBD-forecast expected (full historical series), minus cause-attributed deaths",
+   "age": "age-stratified (GBD age groups); age-standardized rates reported",
+   "refperiod": "1990-2019 historical",
+   "scope": "204 countries + 811 subnat."
+  },
+  {
+   "ref": 24,
+   "study": "Verbeeck (2023)",
+   "family": "linear mixed model",
+   "baseline": "Linear mixed model: region-specific, 2 sine seasonal terms, serial corr, down-weights past excess",
+   "age": "unclear (region-level weekly totals)",
+   "refperiod": "2015-2019",
+   "scope": "Belgium, Netherlands"
+  },
+  {
+   "ref": 25,
+   "study": "Ioannidis, Zonta & Levitt 'Flaws' (2023)",
+   "family": "critique / reference sweep",
+   "baseline": "Argues for full range across multiple reference periods & models, not a single baseline",
+   "age": "age-structure adjustment discussed",
+   "refperiod": "multiple (advocated)",
+   "scope": "global commentary"
+  },
+  {
+   "ref": 26,
+   "study": "Weinberger (2020)",
+   "family": "Serfling/cyclical",
+   "baseline": "Serfling seasonal regression, adjusted for influenza activity and reporting delay",
+   "age": "crude all-ages",
+   "refperiod": "prior years (span n/s)",
+   "scope": "US national + states, Mar-May 2020"
+  },
+  {
+   "ref": 27,
+   "study": "Rivera (2020)",
+   "family": "quasi-Poisson GAM",
+   "baseline": "Quasi-Poisson GAM w/ penalized cyclic splines for seasonality; projected from pre-Feb 2020",
+   "age": "crude all-ages",
+   "refperiod": "2015-2020",
+   "scope": "13 US states, to May 2020"
+  },
+  {
+   "ref": 28,
+   "study": "Woolf (2020)",
+   "family": "Poisson",
+   "baseline": "Hierarchical Poisson regression forecast from historical",
+   "age": "crude all-ages",
+   "refperiod": "2014-2019",
+   "scope": "US national + states, Mar-Jul 2020"
+  },
+  {
+   "ref": 29,
+   "study": "Faust (2021)",
+   "family": "ARIMA",
+   "baseline": "ARIMA on 2015-19 counts to project expected",
+   "age": "single band, adults 25-44",
+   "refperiod": "2015-2019",
+   "scope": "US national + HHS regions"
+  },
+  {
+   "ref": 30,
+   "study": "Bilinski & Emanuel (2020)",
+   "family": "historical average",
+   "baseline": "Mean 2020 vs same-week 2015-19",
+   "age": "crude all-ages",
+   "refperiod": "2015-2019",
+   "scope": "US + 18 OECD, 2020"
+  },
+  {
+   "ref": 31,
+   "study": "Bilinski, Thompson & Emanuel (2023)",
+   "family": "trend-fitted average",
+   "baseline": "2015-19 with fitted underlying trend (out-of-sample validated)",
+   "age": "crude all-ages",
+   "refperiod": "2015-2019",
+   "scope": "US + 20 OECD, 2021-22"
+  },
+  {
+   "ref": 32,
+   "study": "Stokes (2021)",
+   "family": "OLS regression",
+   "baseline": "OLS of 2020 mortality on historical (2013-18) mortality + COVID rates",
+   "age": "crude all-ages (age-std 10-yr bins as sensitivity)",
+   "refperiod": "2013-2018",
+   "scope": "US counties (2,096), 2020"
+  },
+  {
+   "ref": 33,
+   "study": "Ackley (2022)",
+   "family": "GLM",
+   "baseline": "GLM of expected mortality from county historical trends",
+   "age": "unclear",
+   "refperiod": "2011-2019",
+   "scope": "US counties, 2020"
+  },
+  {
+   "ref": 34,
+   "study": "Paglino Sci Adv (2023)",
+   "family": "Bayesian spatial",
+   "baseline": "Bayesian hierarchical spatial (BYM2) Poisson; month + division FE, AR1 trend, county RE",
+   "age": "crude all-ages (CDC suppression prevents age-specific)",
+   "refperiod": "2015-2019",
+   "scope": "US counties (3,127), monthly 2020-22"
+  },
+  {
+   "ref": 35,
+   "study": "Paglino PNAS (2024)",
+   "family": "Bayesian spatial",
+   "baseline": "Spatial Bayesian hierarchical model, AR1 around linear trend (natural-cause)",
+   "age": "crude all-ages",
+   "refperiod": "2015-2019",
+   "scope": "US counties (3,127), 2020-22"
+  },
+  {
+   "ref": 36,
+   "study": "Michelozzi (2020)",
+   "family": "surveillance baseline",
+   "baseline": "SiSMG rapid surveillance baseline (historical city daily mortality, age/sex)",
+   "age": "age-stratified (cut-points n/s)",
+   "refperiod": "historical surveillance (n/s)",
+   "scope": "19 Italian cities, Feb-Apr 2020"
+  },
+  {
+   "ref": 37,
+   "study": "Vandoros (2020)",
+   "family": "diff-in-diff / 5-yr avg",
+   "baseline": "Difference-in-differences; control = 2015-19 average",
+   "age": "crude all-ages (+ 65-74,75-84,85+ suppl.)",
+   "refperiod": "2015-2019",
+   "scope": "England & Wales, early 2020"
+  },
+  {
+   "ref": 38,
+   "study": "Modi (2021)",
+   "family": "counterfactual GP",
+   "baseline": "Conditional Gaussian Process + Synthetic Control",
+   "age": "age-stratified (~10 reporting bands 30-39...90+)",
+   "refperiod": "2015-2019",
+   "scope": "Italy (regions + Bergamo), 2020"
+  },
+  {
+   "ref": 39,
+   "study": "Scortichini (2020)",
+   "family": "interrupted time-series",
+   "baseline": "Two-stage ITS: quasi-Poisson, trend + cyclic B-spline seasonality + temperature DLNM, meta-analysis",
+   "age": "5 bands (<60,60-69,70-79,80-89,90+) by sex",
+   "refperiod": "2015-2019",
+   "scope": "107 Italian provinces, Feb-May 2020"
+  },
+  {
+   "ref": 40,
+   "study": "Blangiardo (2020)",
+   "family": "Bayesian spatiotemporal",
+   "baseline": "Bayesian hierarchical spatiotemporal Poisson (BYM, RW temporal, temperature), INLA",
+   "age": "age-adjusted, internal std, 8 bands (0-14...75+)",
+   "refperiod": "2016-2019",
+   "scope": "Italy municipalities, 2020"
+  },
+  {
+   "ref": 41,
+   "study": "Leon-Gomez MoMo Spain (2021)",
+   "family": "surveillance time-series",
+   "baseline": "MoMo: ~10-yr seasonal moving average + non-linear secular trend, delay-corrected",
+   "age": "crude + 5 bands (0-14,15-44,45-64,65-74,75-84,85+) + age-std 2013 ESP",
+   "refperiod": "~2010-2019",
+   "scope": "Spain national + regions, 2020-21"
+  },
+  {
+   "ref": 42,
+   "study": "EuroMOMO",
+   "family": "Serfling/Farrington",
+   "baseline": "Overdispersed Poisson, secular trend + Fourier seasonality, low-mortality weeks only",
+   "age": "7 bands (0-14,15-44,45-64,65-74,75-84,85+, 65+ aggregate)",
+   "refperiod": "rolling, up to 5 prior yrs (excl. pandemic)",
+   "scope": "European network, weekly"
+  },
+  {
+   "ref": "THIS",
+   "study": "This paper (Fc/Fc+/Tc/Tc+/Fa/Fa+/Ta/Ta+)",
+   "family": "crude & age-stratified, anchored",
+   "baseline": "8-model design: flat/trend (F/T) x crude-single/age-stratified (c/a) x no/yes 2024 anchor (+); back-tested for prediction error. Lowest-error class = anchored trends Ta+ and Tc+; Ta+ designated primary for demographic interpretability",
+   "age": "crude single group (Fc/Fc+/Tc/Tc+) and fully age-stratified 20 five-year bands to 90+ (Fa/Fa+/Ta/Ta+)",
+   "refperiod": "2017-19 (flat) / 2015-19 (trend) + 2024 anchor",
+   "scope": "33 populations, 2020-23"
+  }
+ ]
+}
