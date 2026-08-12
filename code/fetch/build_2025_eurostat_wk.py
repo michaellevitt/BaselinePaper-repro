@@ -29,7 +29,10 @@ codes are compared to HMD (D_T totals and M_T by band).
 import csv, json, os, shutil, time, urllib.request
 from collections import defaultdict
 
-DATA = "/Users/levitt/Dropbox/win1_DB/NewProjects25/mortality.org/HMD_Excess_Death/data"
+import os as _os
+# Repo-relative: this script lives in code/fetch/, so the data dir is ../../data .
+# (Provenance script — see code/fetch/README.md; raw inputs are not shipped with the repo.)
+DATA = _os.path.join(_os.path.dirname(_os.path.dirname(_os.path.dirname(_os.path.abspath(__file__)))), "data")
 API = "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data"
 BUILT = "12 Jul 2026"
 BACKUP_TAG = "pre2025eu_2026-07-12"

@@ -28,7 +28,10 @@ Masters are backed up to data/old/ first. Raw inputs copied to data/<CODE>/raw/.
 import csv, json, os, shutil, sys
 from collections import defaultdict
 
-DATA = "/Users/levitt/Dropbox/win1_DB/NewProjects25/mortality.org/HMD_Excess_Death/data"
+import os as _os
+# Repo-relative: this script lives in code/fetch/, so the data dir is ../../data .
+# (Provenance script — see code/fetch/README.md; raw inputs are not shipped with the repo.)
+DATA = _os.path.join(_os.path.dirname(_os.path.dirname(_os.path.dirname(_os.path.abspath(__file__)))), "data")
 SCRATCH = ("/private/tmp/claude-501/-Users-levitt-Dropbox-win1-DB-NewProjects25-"
            "mortality-org-HMD-Excess-Death/4618e575-676e-4bef-abdf-f884d5099d91/scratchpad")
 BUILT = "12 Jul 2026"
