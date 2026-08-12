@@ -6,7 +6,9 @@ the 10 countries with the most deaths, per John's request (comments 93/156/942):
   * a 4-band centred moving-average spline over the per-band point estimates, to cut band-to-band noise;
   * a SHARED y-axis range across countries (separately for slope and slope-of-slopes) for visual
     comparison;
-  * I^2 (all bands, and 65+ subset) in each panel title.
+  * NO I^2 in the panel titles (John, #169): I^2 scales with the precision of the estimates, so the
+    elderly bands — most deaths, tightest CIs — score a high I^2 even where their absolute departure
+    from the all-ages value is small. I^2 is still computed and printed to stdout for reference.
 
 Same per-band construction as the 3-country Figure S3 (see fig_perband_trend_heterogeneity.py):
 5-year centred moving log-slopes -> OLS on window centre -> slope-in-2019 (g19) and slope-of-slopes (q),
@@ -103,6 +105,7 @@ YL={"f":ylim("f","f_lo","f_hi"),"b":ylim("b","b_lo","b_hi")}
 plt.rcParams.update({"font.size":9})
 fig,axes=plt.subplots(5,4,figsize=(17,19)); xpos=np.arange(len(FINE))
 COL_LT="#3b6fb0"; COL_GE="#c0392b"
+I2LOG=[]   # (country, parameter, I^2 all bands, I^2 65+) — reported below, not on the figure
 PARAMS=[("slope in 2019","f","f_lo","f_hi","%/yr",0),("slope-of-slopes","b","b_lo","b_hi","%/yr²",1)]
 for ci,(l,nm) in enumerate(TEN):
     d=res[l]; rrow=ci//2; cblk=ci%2
@@ -119,9 +122,14 @@ for ci,(l,nm) in enumerate(TEN):
         pv=paper[l][pidx]; ax.axhline(pv,ls="--",color="0.35",lw=1.1,zorder=1)
         ax.axhline(0,color="0.7",lw=0.7,zorder=1); ax.axvline(13.5,ls=":",color="0.6",lw=0.9)
         ax.set_ylim(*YL[key])
+        # I^2 is computed and printed for reference but deliberately NOT shown in the panel titles:
+        # it scales with the precision of the underlying estimates, so the elderly bands (most deaths,
+        # tightest CIs) score a high I^2 even where their absolute departure from the all-ages value is
+        # small. The absolute spread around the dashed line is the informative comparison (John, #169).
         i2a=het([d[a][key] for a in FINE if d[a]],[d[a]["se_"+("f" if key=="f" else "b")] for a in FINE if d[a]])
         i2b=het([d[a][key] for a in GE65 if d[a]],[d[a]["se_"+("f" if key=="f" else "b")] for a in GE65 if d[a]])
-        ax.set_title(f"{nm} — {lbl}  (I² {i2a:.0f}%·{i2b:.0f}% 65+)",fontsize=8.6,fontweight="bold")
+        I2LOG.append((nm,lbl,i2a,i2b))
+        ax.set_title(f"{nm} — {lbl}",fontsize=9.2,fontweight="bold")
         ax.set_xticks(xpos); ax.set_xticklabels(FINE,rotation=90,fontsize=5.6)
         if cblk*2+pidx==0 or cblk*2+pidx==2: ax.set_ylabel(f"({unit})",fontsize=8)
         if rrow==4: ax.set_xlabel("age band",fontsize=8)
@@ -136,4 +144,6 @@ fig.suptitle("Per–age–band pre-pandemic mortality trend (two-step) in the 10
 fig.tight_layout(rect=[0,0,1,0.965])
 fig.savefig(os.path.join(OUTD,"fig_perband_trend_10countries.png"),dpi=140,bbox_inches="tight")
 print("wrote fig_perband_trend_10countries.png + perband_trend_heterogeneity_10countries.csv")
+print("\nI² (reference only; NOT shown on the figure — see note in code):")
+for nm,lbl,a,b in I2LOG: print(f"   {nm:16} {lbl:16} all-bands {a:5.0f}%   65+ {b:5.0f}%")
 print(f"shared y-lims: slope {YL['f'][0]:.1f}..{YL['f'][1]:.1f} %/yr ; slope-of-slopes {YL['b'][0]:.2f}..{YL['b'][1]:.2f} %/yr²")
