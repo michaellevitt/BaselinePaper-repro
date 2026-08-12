@@ -28,12 +28,17 @@ run code/fig_slopeofslopes_montage.py           # Figure 1
 run code/fig_option1_3panel.py                  # Figure 2
 run code/fig_option1_wealth_9panel_indperiod.py # Figure 3
 run code/fig_option1_logquad_montage.py         # Figure S1
-run code/fig_option1_vulnerability_deaths.py    # Figure S2
-run code/fig_perband_trend_heterogeneity.py     # Figure S3 + Table S7
+run code/fig_perband_trend_10countries.py       # Figure S2  (per-age-band trends, 10 countries)
+run code/fig_option1_vulnerability_deaths.py    # Figure S3  (vulnerability, excess deaths)
 
 # ---- 5. tables ----
-run code/build_slope_heterogeneity_table.py    # between-country Q / I^2 heterogeneity (SI)
+run code/build_slope_heterogeneity_table.py    # between-country Q / I^2 heterogeneity (SI text)
+run code/build_table_S6_agespecific.py         # Table S6 (age-band-specific vs all-age TTa excess)
 run code/build_paperA_all_tables.py            # Tables 1–3 + S1–S5 -> docs/PaperA_tables_twostep_v1.xlsx
+
+# Superseded, retained for provenance (the 3-country precursor of Figure S2); not part of the
+# current manuscript. Uncomment to regenerate:
+# run code/fig_perband_trend_heterogeneity.py
 
 echo
 echo "DONE.  See output/EXPECTED_OUTPUTS.md for the full list of figures/tables produced."
