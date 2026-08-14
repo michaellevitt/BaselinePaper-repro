@@ -28,6 +28,7 @@ ESP={"0":1000,"1-4":4000,"5-9":5500,"10-14":5500,"15-19":5500,"20-24":6000,"25-2
      "65-69":5500,"70-74":5000,"75-79":4000,"80-84":2500,"85-89":1500,"90+":1000}; ESPsum=sum(ESP.values())
 W=5; RELIABLE={"BGR":2015,"CHL":2011,"HRV":2007,"EST":2005,"HUN":2006,"LVA":2007,"LTU":2006,"POL":2008,"SVK":2006}
 PERIODS={"2020-2025":[2020,2021,2022,2023,2024,2025],"2020-2023":[2020,2021,2022,2023],"2024-2025":[2024,2025]}
+PERIODS.update({str(y):[y] for y in range(2020,2026)})   # single years, for the by-year SI table
 TAU=float("inf"); CLIP=(0.4,2.5); MINYRS=6; MODELS=["Fa","Ta","TTa","ATTa","STTa","STTa+"]  # TAU=inf -> UNIFORM weighting (recency dropped per John 2026-07-26; was 6.0)
 data,name=load()
 def DP(l,y,a): return cell_for(data,l,y,a,"T")

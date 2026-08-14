@@ -34,7 +34,9 @@ run code/fig_option1_vulnerability_deaths.py    # Figure S3  (vulnerability, exc
 # ---- 5. tables ----
 run code/build_slope_heterogeneity_table.py    # between-country Q / I^2 heterogeneity (SI text)
 run code/build_table_S6_agespecific.py         # Table S6 (age-band-specific vs all-age TTa excess)
-run code/build_paperA_all_tables.py            # Tables 1–3 + S1–S5 -> docs/PaperA_tables_twostep_v1.xlsx
+run code/build_manuscript_tables.py            # ALL manuscript tables, manuscript numbering
+                                               #   -> docs/PaperA_manuscript_tables.xlsx
+run code/build_paperA_all_tables.py            # working workbook (own sheet naming), kept for continuity
 
 # Superseded, retained for provenance (the 3-country precursor of Figure S2); not part of the
 # current manuscript. Uncomment to regenerate:
