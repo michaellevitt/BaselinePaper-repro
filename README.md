@@ -4,8 +4,8 @@ Reproduces every figure and table in *Paper A* (Ioannidis & Levitt et al.), whic
 of **baseline model** — age resolution and pre-pandemic temporal trend — dominates estimates of
 COVID-era excess mortality across **38 populations, 20 five-year age bands, 2020–2025**.
 
-From a single vendored dataset, `./run_all.sh` regenerates all 6 manuscript figures, the 8-sheet table
-workbook (Tables 1–3 and S1–S5), and the supplementary heterogeneity tables.
+From a single vendored dataset, `./run_all.sh` regenerates all 6 manuscript figures and a workbook
+with every computed table (Tables 1–3 and S1–S8, numbered as in the paper).
 
 ## Quick start
 
@@ -30,31 +30,40 @@ P-score (100·(O−E)/E). The baselines differ only in how they treat the pre-pa
 | Model | Baseline |
 |---|---|
 | **Fa** | flat (2017–2019 mean rate per age band) |
-| **TTa** | two-step log-quadratic trend (moving 5-year slopes → slope-of-slopes), per band |
-| **STTa** | TTa with the country trend shrunk toward the global trend (√deaths weight) |
+| **TTa** | two-step log-quadratic trend (moving 5-year slopes → slope-of-slopes) |
+| **STTa** | TTa with the trend shrunk toward the 38-population trend (√deaths weight) |
 | **STTa⁺** | STTa fitted with a {2019, 2024, 2025} return-slope anchor |
 
+Each trend model is run two ways: **age-band trend modeling**, a separate trend fitted within each
+five-year age band (the paper's headline numbers), and **country-level trend modeling**, one trend
+per country applied to every band. Table 2 gives both.
+
 Everything is fit **per 5-year age band** and summed, which is the paper's central methodological point:
-coarser age bands bias the excess. Pooled all-ages excess ranges from **1.16M (flat)** to
-**2.4–2.6M (trended/anchored)** over 2020–2025 — a spread driven entirely by baseline choice.
+coarser age bands bias the excess. Pooled all-ages excess over 2020–2025 ranges from
+**0.92M (flat)** to **2.14–2.49M (trend models)**, a spread driven by baseline choice.
 
 ## Pipeline
 
 ```
-data/master_5x1_DPM_90plus.csv   (vendored analytic dataset — deaths/exposures by band·year·population)
-        │
-        ├─ build_hmd_calibration.py ──▶ output/hmd_calibration.csv
-        ├─ stmf_moving_slopes.py ─────▶ output/stmf_moving_slopes.json
-        │        └─ slope_of_slopes_ci.py ─▶ output/slope_of_slopes_CI.csv   (two-step trend + 95% CIs)
-        ▼
-   model_option1_periods.py   (THE engine)
-        └─▶ output/{model_option1_periods, pooled_option1_by_period, option1_country_params}.csv
-                 │
-                 ├─ fig_*.py ─────────────▶ 6 manuscript figures  (output/*.png)
-                 └─ build_*tables*.py ─────▶ Tables 1–3 + S1–S7    (docs/*.xlsx)
+data/master_5x1_DPM_90plus.csv   (vendored analytic dataset: deaths/exposures by band, year, population)
+   │
+   ├─ build_hmd_calibration.py, stmf_moving_slopes.py, slope_of_slopes_ci.py   (trend parameters)
+   │
+   ├─ 1. model_option1_periods.py              country-level engine
+   │        └─ uk_vs_ew_full_family.py         Table S8 (validates against step 1)
+   ├─ 2. model_agespecific_trends_v1.py        per-band trends; reads step 1 as its country-level arm
+   ├─ 3. model_option1_periods_v2_agespecific.py   age-band engine: the headline numbers,
+   │                                             overwrites step 1's output files
+   ├─ model_leecarter_periods_v1.py            Lee-Carter contrast
+   │
+   ├─ fig_*.py ────────────▶ 6 manuscript figures      (output/*.png)
+   └─ build_*tables*.py ───▶ Tables 1–3 and S1–S8       (docs/*.xlsx)
 ```
 
-See `output/EXPECTED_OUTPUTS.md` for the artifact-by-artifact map.
+**The order of steps 1–3 matters.** The two engines write the same filenames, so the age-band engine
+must run last, and the country-level engine must run first, because step 2 reads its output. Run out of
+order, every script still succeeds but the country-level comparison in Table 2 is wrong. `run_all.sh`
+explains this and runs them correctly; see `output/EXPECTED_OUTPUTS.md` for the artifact map.
 
 ## Layout
 
@@ -71,7 +80,11 @@ See `output/EXPECTED_OUTPUTS.md` for the artifact-by-artifact map.
 │   ├── excess_anchor_window.py     # master loader (deaths/exposures, HMD-basis calibration)
 │   ├── stmf_moving_slopes.py       # moving-slope trend-of-trends
 │   ├── slope_of_slopes_ci.py       # two-step trend parameters + 95% CIs
-│   ├── model_option1_periods.py    # the excess-mortality engine
+│   ├── model_option1_periods.py    # country-level engine (runs first; see Pipeline)
+│   ├── model_agespecific_trends_v1.py            # per-band trends
+│   ├── model_option1_periods_v2_agespecific.py   # age-band engine (headline numbers)
+│   ├── model_leecarter_periods_v1.py             # Lee-Carter contrast
+│   ├── uk_vs_ew_full_family.py     # Table S8
 │   ├── fig_*.py                    # the 6 manuscript figures
 │   ├── build_*.py                  # the table workbooks
 │   └── fetch/                      # raw → master builders (provenance; see fetch/README.md)
@@ -86,6 +99,9 @@ See `output/EXPECTED_OUTPUTS.md` for the artifact-by-artifact map.
 ## Data & reproducibility boundary
 
 The reproducible boundary is the **processed master dataset** (`data/master_5x1_DPM_90plus.csv`).
+Its France and United States rows were refreshed from the Human Mortality Database release of
+27 August 2026, which revised population estimates (most at ages 80+, and nearly every age band in
+the latest years); `code/refresh_hmd_exposures_v1.py` documents that step.
 Everything from the master onward regenerates with one command. The raw national/HMD source files are
 **not** included: the Human Mortality Database prohibits redistribution, and several national sources
 are login-gated (e.g. CDC WONDER). The builders that assembled the master from raw sources are provided

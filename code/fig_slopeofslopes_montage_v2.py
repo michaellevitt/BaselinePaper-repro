@@ -1,18 +1,23 @@
-#!/usr/bin/env python3
 """
-SUPERSEDED by fig_slopeofslopes_montage_v2.py, which adds the age-band trend line.
-Kept for provenance only; not in run_all.sh.
+Figure 1, v2 (2026-09-19) — 38 panels of the age-standardised slope-of-change, with the trend the
+PRIMARY model now uses overlaid.
 
-John #5: ONE 38-panel figure, TTa + STTa + STTa+.  Each panel = one population's per-year slope-of-change
-(empirical 5-year centred moving slope of the ESP-2013 age-standardised log death rate, %/yr) as points over
-2003-2019, plus three fitted slope-of-slopes lines from the two-step Option-1 model:
-  TTa  (own two-step β,γ)          — solid over the fit years, dashed as it projects 2019→2025
-  STTa (precision-shrunk β,γ)      — solid over the fit years, dashed 2019→2025
-  STTa+ (anchored)                 — 2019→2025 only; shares STTa's 2019 slope but bends the curvature so the
-                                     standardised baseline meets the observed 2025 level.  Over 2019→2025 the
-                                     divergence between dashed STTa and solid STTa+ shows what anchoring does.
-Slope line g(y)=g19+sos·(y−2019), g19=100β (%/yr at 2019), sos=200γ (%/yr²); a rising line = decelerating decline.
-Reads output/option1_country_params.csv.  Writes output/fig_slopeofslopes_montage_STTaplus.png ."""
+Age-specific trends became the primary analysis on 19 Sep 2026, so the three country-level lines
+this figure used to label TTa, STTa and STTa+ are no longer the models' parameters: each of the
+twenty age bands now carries its own two-step trend.  Those three lines are still worth showing,
+because the heterogeneity of the age-standardised trend across populations is what motivates the
+whole approach, but they are relabelled as what they are, all-ages trends.
+
+A fourth line is added: the baseline-deaths-weighted mean of the twenty band trends actually used
+by the primary STTa, read from option1_country_params.csv (columns g19_bandwmean, sos_bandwmean).
+Where it departs from the teal all-ages line, promoting age-specific trends changed that
+population's baseline.  Figure S2 shows the twenty bands behind it.
+
+Points are the empirical 5-year centred moving slopes of the ESP-2013 age-standardised log death
+rate.  Slope line g(y) = g19 + sos*(y-2019); a rising line means a decelerating decline.
+
+Reads output/option1_country_params.csv.  Writes output/fig_slopeofslopes_montage_v2.png .
+"""
 import os, sys, csv, numpy as np, matplotlib; matplotlib.use("Agg"); import matplotlib.pyplot as plt
 HERE=os.path.dirname(os.path.abspath(__file__)); ROOT=os.path.dirname(HERE); OUTD=os.path.join(ROOT,"output")
 sys.path.insert(0, HERE)
@@ -24,7 +29,8 @@ ESP={"0":1000,"1-4":4000,"5-9":5500,"10-14":5500,"15-19":5500,"20-24":6000,"25-2
      "65-69":5500,"70-74":5000,"75-79":4000,"80-84":2500,"85-89":1500,"90+":1000}; ESPsum=sum(ESP.values())
 RELIABLE={"BGR":2015,"CHL":2011,"HRV":2007,"EST":2005,"HUN":2006,"LVA":2007,"LTU":2006,"POL":2008,"SVK":2006}
 X0,XF,XP=2003,2019,2025          # display start, fit end, projection end
-COL="#2E75B6"; CTT="#c0392b"; CST="#159090"; CSP="#6a3d9a"   # points / TTa / STTa / STTa+
+COL="#2E75B6"; CBW="#e67e22"   # deaths-weighted mean of band trends (primary)
+CTT="#c0392b"; CST="#159090"; CSP="#6a3d9a"   # points / TTa / STTa / STTa+
 data,name=load()
 def lnR(loc,y):
     if any(cell_for(data,loc,y,a,"T") is None for a in FINE): return None
@@ -100,6 +106,11 @@ for k,loc in enumerate(order):
     av=anch(loc)                                                        # STTa* = engine's slope-anchored shrunk trend (≡ paper STTa+, centre convention)
     if av is not None:
         xx=np.array([max(rs,X0),XP],float); ax.plot(xx,av[0]+av[1]*(xx-2019),color=CSP,lw=2.2,zorder=7)
+    gbw,sbw=p.get("g19_bandwmean"),p.get("sos_bandwmean")               # PRIMARY: deaths-weighted mean of the 20 band trends
+    if gbw not in (None,"") and sbw not in (None,""):
+        gb,sb=float(gbw),float(sbw)
+        ax.plot(yf,gb+sb*(yf-2019),color=CBW,lw=2.0,zorder=8)
+        ax.plot(yp,gb+sb*(yp-2019),color=CBW,lw=1.6,ls=(0,(3,2)),zorder=8)
     rp=retpts[loc]                                                      # observed return-slope anchor point at ~2022.7
     if rp is not None: ax.plot(rp[0],rp[1],marker="*",ms=11,color=CSP,mec="black",mew=0.6,ls="none",zorder=9)
     ttl=name.get(loc,loc) if loc not in RELIABLE else f"{name.get(loc,loc)} (from {RELIABLE[loc]})"
@@ -108,9 +119,10 @@ for k,loc in enumerate(order):
     ax.tick_params(labelsize=6.3); ax.grid(alpha=.3); ax.set_axisbelow(True)
 for k in range(len(order),len(axes)): axes[k].axis("off")
 handles=[plt.Line2D([],[],color=COL,lw=1.6,marker="o",ms=4,label="Observed pre-pandemic 5-year slopes"),
-         plt.Line2D([],[],color=CTT,lw=2.2,label="TTa"),
-         plt.Line2D([],[],color=CST,lw=2.0,label="STTa"),
-         plt.Line2D([],[],color=CSP,lw=2.4,label="STTa+"),
+         plt.Line2D([],[],color=CTT,lw=2.2,label="All-ages two-step trend, own"),
+         plt.Line2D([],[],color=CST,lw=2.0,label="All-ages two-step trend, shrunk"),
+         plt.Line2D([],[],color=CSP,lw=2.4,label="All-ages, slope-anchored"),
+         plt.Line2D([],[],color=CBW,lw=2.2,label="Primary STTa: deaths-weighted mean of the 20 band trends"),
          plt.Line2D([],[],color=CSP,marker="*",ms=13,ls="none",mec="black",mew=0.6,label="Observed slope for 2019, 2024 and 2025 data points")]
 # legend starts at the left edge of the FIRST empty cell and grows rightwards across the
 # remaining ones, instead of being centred in the last cell and spilling past the grid (match Fig S1)
@@ -118,5 +130,5 @@ axes[len(order)].legend(handles=handles,loc="center left",bbox_to_anchor=(0.0,0.
                         fontsize=9.5,frameon=False,borderaxespad=0.0,handlelength=2.4)
 fig.supylabel("annual slope of the ESP-2013 age-standardised death rate  (%/yr)",fontsize=12.5)
 fig.subplots_adjust(left=0.07,right=0.995,top=0.975,bottom=0.03,wspace=0.06,hspace=0.25)   # manual layout (match Fig S1); tight_layout was shrinking panels around the in-cell legend
-FIG=os.path.join(OUTD,"fig_slopeofslopes_montage_STTaplus.png"); fig.savefig(FIG,dpi=140,bbox_inches="tight"); plt.close(fig)
+FIG=os.path.join(OUTD,"fig_slopeofslopes_montage_v2.png"); fig.savefig(FIG,dpi=140,bbox_inches="tight"); plt.close(fig)
 print(f"wrote {FIG}  (y-axis common {ymin:.0f}..{ymax:.0f} %/yr; 38 panels)")

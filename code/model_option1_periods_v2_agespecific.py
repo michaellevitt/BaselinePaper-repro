@@ -1,28 +1,31 @@
-#!/usr/bin/env python3
 """
-COUNTRY-LEVEL ENGINE.  One trend per country, applied to every age band.  The paper's
-headline numbers come from model_option1_periods_v2_agespecific.py, which fits a separate
-trend within each band and writes the SAME output filenames.
+Option-1 per-period engine, AGE-SPECIFIC TRENDS as the primary analysis (v2, 2026-09-19).
 
-This script IS still needed and IS in run_all.sh, but only BEFORE the v2 engine: 
-model_agespecific_trends_v1.py reads pooled_option1_by_period.csv to get the country-level
-arm of the comparison reported in Table 2.  Never run it after the v2 engine, or the
-age-band results the paper reports are silently replaced by country-level ones.
+Identical to model_option1_periods.py except for where TTa / STTa / STTa+ get their trend.
+The published engine used ONE (beta, gamma) per country, estimated from the age-standardised
+rate, applied to all twenty bands.  Here each band carries its own two-step trend, per John's
+18 Sep 2026 request: "we defeat ourselves when we say that age adjustment is so important but
+then ignore it in the main analyses."
 
-FINALIZED Option-1 per-period engine (fitted-alpha anchor, tau=6).  Replaces model_country_periods.csv for
-the trend family.  Full family Fa, Ta, TTa, ATTa, STTa x 3 periods x 3 age groups x 38 populations.
+  Fa   : flat 2017-2019 mean rate per band            UNCHANGED (already per band)
+  Ta   : linear-in-rate OLS 2015-2019 per band        UNCHANGED (already per band)
+  TTa  : band's OWN two-step (islope@2019, sos)
+  STTa : band's shrunk trend, shrinkage computed WITHIN band
+  STTa+: band's shrunk ANCHORED trend
+  ATTa : unchanged country-level global (retained for provenance, not in the paper)
 
-  Fa   : flat 2017-2019 mean rate per band (unchanged).
-  Ta   : linear-in-rate OLS 2015-2019 per band (unchanged).
-  TTa/ATTa/STTa : recency-weighted WLS log-quadratic (tau=6), FITTED-alpha anchor:
-                    baseline = exp(alpha_a + beta*t + gamma*t^2),  t=y-2019,  clip exp(beta t+gamma t^2) in [0.4,2.5].
-                  TTa uses the band's own (beta,gamma); ATTa the pop-weighted global; STTa the
-                  empirical-Bayes precision-shrunk country trend.  alpha_a = band's fitted 2019 level.
+Trend parameters are read from output/agespecific_band_params_v1.csv, written by
+code/model_agespecific_trends_v1.py, which must run first.  This mirrors how the published
+engine reads its country trends from slope_of_slopes_CI.csv.  That CSV stores 4 decimals, so
+reproducing these numbers exactly requires the same rounding.
 
-Writes:
-  output/option1_country_params.csv   (per country: beta_i,gamma_i,SE,w,shrunk,pop)   [tau=6, anchor-independent]
-  output/model_option1_periods.csv    (long: country,group,model,period,n_years,O,E,excess,pscore_meanann)
-  output/pooled_option1_by_period.csv (pooled per period,group,model: O,E,excess,pooled_Ppct,mean_meanann)
+option1_country_params.csv keeps its country-level columns unchanged, so Figure 1, Figure S1 and
+Table 1 still describe the age-standardised trend and its between-country heterogeneity, and
+gains two columns, g19_bandwmean and sos_bandwmean: the baseline-deaths-weighted mean of the
+band trends actually used, which is the age-specific model's country-level summary.
+
+Writes the SAME filenames as the published engine, so every downstream figure and table picks
+these up without modification.
 """
 import os, sys, csv, numpy as np
 HERE=os.path.dirname(os.path.abspath(__file__)); ROOT=os.path.dirname(HERE); OUTD=os.path.join(ROOT,"output")
@@ -97,6 +100,28 @@ for l in countries:
         p["VR"]=np.inf; p["w"]=0.0; p["bs"],p["gs"]=bG,gG; p["bas"],p["gas"]=baG,gaG
     p["wb"]=p["wg"]=p["w"]                                                # back-compat: single weight for both
 
+# ---- AGE-SPECIFIC trends: read the per-band two-step parameters (v2) ----
+BP={}
+_bp_path=os.path.join(OUTD,"agespecific_band_params_v1.csv")
+if not os.path.exists(_bp_path):
+    sys.exit("run code/model_agespecific_trends_v1.py first: "+_bp_path+" is missing")
+for r in csv.DictReader(open(_bp_path)):
+    BP.setdefault(r["country"],{})[r["band"]]=dict(
+        is19=_f(r["islope2019"]), sos=_f(r["sos"]),
+        is19_s=_f(r["islope2019_shrunk"]), sos_s=_f(r["sos_shrunk"]),
+        a_is_s=_f(r["anch_islope2025_shrunk"]), a_sos_s=_f(r["anch_sos_shrunk"]),
+        D=float(r["base_deaths"]))
+missing=[l for l in countries if l not in BP]
+if missing: sys.exit(f"per-band trends missing for {missing}")
+# population-level summary of the band trends actually used (deaths-weighted), for Table 1/Fig 1
+for l in countries:
+    wD=np.array([BP[l][a]["D"] for a in FINE],float)
+    for src,dst in (("is19_s","g19_bw"),("sos_s","sos_bw")):
+        v=np.array([BP[l][a][src] if BP[l][a][src] is not None else np.nan for a in FINE],float)
+        m=np.isfinite(v)&(wD>0)
+        cpar[l][dst]=float(np.average(v[m],weights=wD[m])) if m.any() else np.nan
+_CLIPHIT=[0,0]
+
 # ---- per-band baselines: cache band WLS logquad coeffs + Fa/Ta rates ----
 band={}; Fa_rate={}; Ta_rate={}
 for l in countries:
@@ -109,17 +134,24 @@ for l in countries:
         Ta_rate[l][a]=np.polyfit(np.arange(2015,2020,dtype=float)-2012,[DP(l,y,a)[0]/DP(l,y,a)[1] for y in range(2015,2020)],1)
 
 def rate(l,a,model,y):
-    t=y-2019.0; c=band[l][a]; alpha=c[2]
+    """v2: TTa/STTa/STTa+ take the BAND's own two-step trend, not the country's."""
+    t=y-2019.0; c=band[l][a]; alpha=c[2]; p=BP[l][a]
     if model=="Fa": return Fa_rate[l][a]
     if model=="Ta": return float(np.polyval(Ta_rate[l][a],y-2012))
-    if model=="STTa+":                                       # SLOPE-anchored STTa: the shrunk trend fitted with the
-        b,g=cpar[l]["bas"],cpar[l]["gas"]                    # {2019,2024,2025} return slope added to the slope regression
-        return np.exp(alpha)*min(max(np.exp(b*t+g*t*t),CLIP[0]),CLIP[1])
-    if model=="TTa": b,g=(cpar[l]["b"],cpar[l]["g"]) if np.isfinite(cpar[l]["b"]) else (bG,gG)  # country two-step own trend
-    elif model=="ATTa": b,g=bG,gG
-    else: b,g=cpar[l]["bs"],cpar[l]["gs"]
-    mult=min(max(np.exp(b*t+g*t*t),CLIP[0]),CLIP[1])
-    return np.exp(alpha)*mult
+    if model=="ATTa": b,g=bG,gG                              # unchanged country-level global
+    elif model=="STTa+":
+        ai,asos=p["a_is_s"],p["a_sos_s"]                     # anchored slope@2025 -> back to 2019
+        if ai is None or asos is None: b,g=cpar[l]["bas"],cpar[l]["gas"]
+        else: b,g=(ai-6.0*asos)/100.0, asos/200.0
+    elif model=="TTa":
+        b,g=(p["is19"]/100.0, p["sos"]/200.0) if p["is19"] is not None else (p["is19_s"],p["sos_s"])
+        if p["is19"] is None: b,g=(b/100.0 if b is not None else bG),(g/200.0 if g is not None else gG)
+    else:
+        b,g=(p["is19_s"]/100.0, p["sos_s"]/200.0) if p["is19_s"] is not None else (bG,gG)
+    m=np.exp(b*t+g*t*t)
+    _CLIPHIT[0]+=1
+    if m<CLIP[0] or m>CLIP[1]: _CLIPHIT[1]+=1
+    return np.exp(alpha)*min(max(m,CLIP[0]),CLIP[1])
 
 # ---- compute per period/group/model ----
 recs=[]
@@ -151,15 +183,16 @@ with open(os.path.join(OUTD,"option1_country_params.csv"),"w",newline="") as f:
     w=csv.writer(f); w.writerow(["country","name","beta_i","gamma_i",
         "islope2019","islope2019_lo","islope2019_hi","sos","sos_lo","sos_hi",   # two-step table cols (intercept-slope, sos, each +/-95% CI)
         "beta_shrunk","gamma_shrunk","beta_anch_shrunk","gamma_anch_shrunk",    # STTa (unanchored) and STTa+ (slope-anchored) shrunk slopes
-        "g19_pct","sos_pct","w","VR","pop2019","base_deaths"])
+        "g19_pct","sos_pct","w","VR","pop2019","base_deaths","g19_bandwmean","sos_bandwmean"])
     for l in countries:
         p=cpar[l]; fin=np.isfinite(p["b"])
         w.writerow([l,name.get(l,l), _fm(p["b"],6),_fm(p["g"],7),
             _fm(p["is19"]),_fm(p["is_lo"]),_fm(p["is_hi"]),_fm(p["sos"]),_fm(p["sos_lo"]),_fm(p["sos_hi"]),
             _fm(p["bs"],6),_fm(p["gs"],7),_fm(p["bas"],6),_fm(p["gas"],7),
             _fm(p["is19"]),_fm(p["sos"],4), f"{p['w']:.4f}", f"{p['VR']:.1f}" if fin else "",
-            round(p["pop"]), round(p["D"])])
+            round(p["pop"]), round(p["D"]), _fm(p.get("g19_bw"),4), _fm(p.get("sos_bw"),4)])
 
+print(f"\n[v2 AGE-SPECIFIC] baseline multiplier hit the clip in {_CLIPHIT[1]:,} of {_CLIPHIT[0]:,} band-years")
 print(f"wrote model_option1_periods.csv ({len(recs)} rows), pooled_option1_by_period.csv, option1_country_params.csv")
 print(f"global trend: g19={100*bG:+.2f}%/yr  sos={200*gG:+.3f}%/yr^2\n")
 print("POOLED all-ages excess by period x model (two-step trend, slope-anchored STTa+):")
