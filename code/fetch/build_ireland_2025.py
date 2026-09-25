@@ -25,7 +25,7 @@ window means late-2025 deaths may still rise slightly. (2) The 85-89/90+ split u
 Appends 60 rows (IRL_EUROSTAT 2025 x 20 bands x {the row carries F,M,T together}). Backs up the master first.
 """
 import os, csv, json, shutil, datetime
-HERE=os.path.dirname(os.path.abspath(__file__)); ROOT=os.path.dirname(HERE)
+HERE=os.path.dirname(os.path.abspath(__file__)); ROOT=os.path.dirname(os.path.dirname(HERE))  # code/fetch -> repository root
 MASTER=os.path.join(ROOT,"data","master_5x1_DPM_90plus.csv")
 VSA07=os.path.join(ROOT,"data","IRL_CSO","raw","VSA07.json")
 LOC="IRL_EUROSTAT"; SRC="CSO_VSA07"; YEAR="2025"

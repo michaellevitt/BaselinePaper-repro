@@ -25,7 +25,7 @@ WHAT THIS DOES.  Writes a NEW master with FRATNP and USA parent cells taken from
 (deaths and exposures, all years, all twenty bands, 90-94 through 110+ collapsed to 90+),
 adding any year the release has and the master lacks.  The original is never modified.
 
-Reads : data/master_5x1_DPM_90plus.csv, ~/Downloads/hmd_countries_20260827/
+Reads : data/master_5x1_DPM_90plus.csv, data/raw/hmd_countries_20260827/ (or $PAPERA_RAW)
 Writes: data/master_5x1_DPM_90plus_hmd20260827.csv
 """
 import csv
@@ -35,10 +35,11 @@ import sys
 from collections import defaultdict
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-ROOT = os.path.dirname(HERE)
+ROOT = os.path.dirname(os.path.dirname(HERE))   # code/fetch -> repository root
 SRC = os.path.join(ROOT, "data", "master_5x1_DPM_90plus.csv")
 DST = os.path.join(ROOT, "data", "master_5x1_DPM_90plus_hmd20260827.csv")
-HMD = os.path.expanduser("~/Downloads/hmd_countries_20260827")
+HMD = os.path.join(os.environ.get("PAPERA_RAW", os.path.join(ROOT, "data", "raw")),
+                   "hmd_countries_20260827")   # the HMD "all countries" bundle, unzipped
 FIX = ["FRATNP", "USA"]
 COLLAPSE = {"90-94", "95-99", "100-104", "105-109", "110+"}
 FINE = ["0", "1-4", "5-9", "10-14", "15-19", "20-24", "25-29", "30-34", "35-39", "40-44",
@@ -95,6 +96,9 @@ with open(SRC) as f:
                 dchanged[key[0]] += 1
             r["D_F"], r["D_M"], r["D_T"] = f"{df:.0f}", f"{dm:.0f}", f"{dt:.0f}"
             r["P_F"], r["P_M"], r["P_T"] = f"{pf:.2f}", f"{pm:.2f}", f"{pt:.2f}"
+            # keep the death-rate columns consistent with the new deaths and exposures
+            r["M_F"], r["M_M"], r["M_T"] = [f"{d_ / p_:.6f}" if p_ else ""
+                                            for d_, p_ in ((df, pf), (dm, pm), (dt, pt))]
             r["source"] = "HMD_20260827"
         rows.append(r)
 
@@ -108,7 +112,9 @@ for key in sorted(set(new) - seen):
                  "source": "HMD_20260827", "year": str(y), "age": a,
                  "age_start": str(ASTART[a]),
                  "D_F": f"{df:.0f}", "D_M": f"{dm:.0f}", "D_T": f"{dt:.0f}",
-                 "P_F": f"{pf:.2f}", "P_M": f"{pm:.2f}", "P_T": f"{pt:.2f}"})
+                 "P_F": f"{pf:.2f}", "P_M": f"{pm:.2f}", "P_T": f"{pt:.2f}",
+                 "M_F": f"{df / pf:.6f}" if pf else "", "M_M": f"{dm / pm:.6f}" if pm else "",
+                 "M_T": f"{dt / pt:.6f}" if pt else ""})
     added += 1
 
 rows.sort(key=lambda r: (r["location"], int(r["year"]), ASTART.get(r["age"], 999)))

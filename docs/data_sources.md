@@ -14,7 +14,7 @@ runs without re-downloading anything.
 
 | Source | Coverage | Access |
 |---|---|---|
-| **Human Mortality Database** (mortality.org) | Deaths and exposures by 5-year age band, historical → ~2020–2024 depending on country, for all HMD members | **Free after registration; login-gated; not redistributable.** Bulk `Deaths_5x1` / `Exposures_5x1` per country, or the zipped country bundle. |
+| **Human Mortality Database** (mortality.org) | Deaths and exposures by 5-year age band, historical → ~2020–2024 depending on country, for all HMD members | **Free after registration; login-gated; not redistributable.** Bulk `Deaths_5x1` / `Exposures_5x1` per country, or the zipped country bundle. France and the United States were refreshed from the release of 27 August 2026, which revised their population estimates. |
 | **HMD Short-Term Mortality Fluctuations (STMF)** | Weekly deaths by broad age band | Free download from the STMF page on mortality.org (pooled `stmf.csv`). Used to extend a few 2025 series. |
 | **Eurostat** `demo_r_mwk_05` (weekly deaths), `demo_pjan` (population on 1 Jan), `demo_magec` | European populations, recent years incl. 2025 | Open, no login. Eurostat API / bulk download. |
 | **UK ONS** + **Nomis** | England & Wales weekly deaths by age/sex; mid-year population (`NM_161_1` / `NM_2002_1`) | Open. |
@@ -36,19 +36,20 @@ runs without re-downloading anything.
 | New Zealand (`NZL_NP`) | **Stats NZ** | Open; some values inlined. |
 | Ireland (`IRL`) | **CSO** `VSA07` | Open; JSON. |
 | Israel (`ISR`) | **CBS** deaths & population by 5-year band | Open CSV. |
+| Scotland (`SCO_NRS`) | **National Records of Scotland**: deaths time series (Table DT04a, including 2025) and mid-year population estimates | Open. Used only for Table S8. |
+| Northern Ireland (`NIR_NISRA`) | **NISRA** registered deaths (tables 5.2b/5.2c) and mid-year estimates by single year of age; 2025 deaths scaled from HMD STMF | Open. Used only for Table S8. |
 
 ## Covariates (static, curated)
 
 | File | Contents | Source |
 |---|---|---|
 | `data/vuln_covariates_38_v3.csv` | vulnerability group + GDP per capita 2021, Gini, poverty rate | World Bank Open Data (`data.worldbank.org`), OECD |
-| `data/methods_comparison.json` | prior baseline-method studies for Table 1 | curated from the cited literature |
 
 ## Reproducing the master from raw
 
 See [`../code/fetch/README.md`](../code/fetch/README.md). In brief: obtain the HMD backbone and the
-national/Eurostat sources above, place them where each `code/fetch/build_*` script expects them (repoint
-the input-path constants), then run the builders in the documented order. Each is idempotent and backs
+national/Eurostat sources above, place them in `data/raw/` (or set the
+`PAPERA_RAW` environment variable to the folder that holds them), then run the builders in the documented order. Each is idempotent and backs
 up the master before writing. Because HMD is login-gated and not redistributable, and CDC WONDER is
 gated behind an interactive agreement, a fully unattended raw→master rebuild is not possible from this
 repository alone — which is why the processed master is vendored.

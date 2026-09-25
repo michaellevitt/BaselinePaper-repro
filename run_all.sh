@@ -70,18 +70,15 @@ run code/fig_option1_vulnerability_deaths.py    # Figure S3  (vulnerability, exc
 
 # ---- 8. tables ----
 run code/build_slope_heterogeneity_table.py    # between-country Q / I^2 heterogeneity (SI text)
-run code/build_table_S6_agespecific.py         # Table S6 (age-band vs country-level TTa excess)
+run code/build_table_S1_agespecific.py         # Table S1 data (age-band vs country-level TTa, 10 countries)
 run code/build_manuscript_tables.py            # Tables 1-3 and S1-S8, numbered as in the paper
                                                #   -> docs/PaperA_manuscript_tables.xlsx
-run code/build_paperA_all_tables.py            # working workbook (own sheet naming), kept for continuity
 
 # Not run, and not part of the current manuscript:
 #   code/backtest_leecarter_2014_2019_v1.py     back-test, cut from the paper on 21 Sep 2026
 #   code/fig_perband_trend_heterogeneity.py     3-country precursor of Figure S2
-#   code/refresh_hmd_exposures_v1.py            one-off correction of the vendored master from
-#                                               an HMD release; reads outside the repository, so
-#                                               it sits outside the reproducible boundary (see
-#                                               docs/data_sources.md)
+# The code/fetch/ scripts built data/master_5x1_DPM_90plus.csv from raw sources and are not run
+# here either; see code/fetch/README.md.
 
 echo
 echo "DONE.  See output/EXPECTED_OUTPUTS.md for the full list of figures/tables produced."

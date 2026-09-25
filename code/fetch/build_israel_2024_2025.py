@@ -17,7 +17,7 @@ baselines absorb war deaths.  This is an approximation flagged in the paper's Da
 Appends 40 Total-only rows (ISR 2024, 2025 x 20 bands).  Backs up the master first.
 """
 import os, csv, shutil
-HERE=os.path.dirname(os.path.abspath(__file__)); ROOT=os.path.dirname(HERE)
+HERE=os.path.dirname(os.path.abspath(__file__)); ROOT=os.path.dirname(os.path.dirname(HERE))  # code/fetch -> repository root
 MASTER=os.path.join(ROOT,"data","master_5x1_DPM_90plus.csv")
 CBS=os.path.join(ROOT,"data","ISR_CBS_2017_2024","ISRAEL_CBS_deaths_pop_by_5yr_band_2017_2024.csv")
 
@@ -79,7 +79,7 @@ with open(MASTER,"a",newline="") as f:
     w=csv.writer(f)
     for y in (2024,2025):
         for lab,a in BANDS:
-            d=round(D[y][a]); p=round(P[y][a]); m=d/p*1000 if p else ""
+            d=round(D[y][a]); p=round(P[y][a]); m=d/p if p else ""
             w.writerow(["ISR","Israel","STMF_CBS_2425",y,lab,a,"","",d,"","",p,"","",
                         (f"{m:.4f}" if m!="" else "")])
 print(f"appended ISR 2024+2025 (40 rows) to {os.path.basename(MASTER)}; backup .preISR2425.bak.csv")

@@ -18,7 +18,7 @@ docs/PaperA_manuscript_tables.xlsx
 Reads the engine outputs in output/ plus data/vuln_covariates_38_v3.csv.
 Run run_all.sh, which produces every input in the required order (the two engines, the
 age-band trends, the Table S8 script, build_option1_age_resolution.py and
-build_table_S6_agespecific.py)."""
+build_table_S1_agespecific.py)."""
 import os, csv, numpy as np
 from openpyxl import Workbook
 from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
@@ -183,7 +183,7 @@ sheet("Table S6",[hdr[0]+" (millions)"]+hdr[1:],
       [[m]+[f"{float(arm[m][i])/1e6:.2f}" for i in range(1,len(hdr))] for m in MODELS if m in arm],[22,14,16,15,17])
 
 # ---------- Table S1 (10 largest countries) ----------
-s6p=os.path.join(OUTD,"table_S6_agespecific_vs_allage.csv")
+s6p=os.path.join(OUTD,"table_S1_agespecific_vs_allage.csv")
 if os.path.exists(s6p):
     s6=list(csv.DictReader(open(s6p)))
     rows=[[r["name"] if r["code"]!="TOTAL" else "Total (10 countries)"]+

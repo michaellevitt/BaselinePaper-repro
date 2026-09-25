@@ -32,8 +32,7 @@ import os as _os
 # Repo-relative: this script lives in code/fetch/, so the data dir is ../../data .
 # (Provenance script — see code/fetch/README.md; raw inputs are not shipped with the repo.)
 DATA = _os.path.join(_os.path.dirname(_os.path.dirname(_os.path.dirname(_os.path.abspath(__file__)))), "data")
-SCRATCH = ("/private/tmp/claude-501/-Users-levitt-Dropbox-win1-DB-NewProjects25-"
-           "mortality-org-HMD-Excess-Death/4618e575-676e-4bef-abdf-f884d5099d91/scratchpad")
+SCRATCH = os.environ.get("PAPERA_RAW", os.path.join(DATA, "raw"))  # raw inputs; see code/fetch/README.md
 BUILT = "12 Jul 2026"
 BACKUP_TAG = "pre2025asia_2026-07-12"
 

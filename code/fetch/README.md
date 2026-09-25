@@ -6,9 +6,9 @@ HMD sources. They are included for transparency and audit.
 > **They are not part of the one-command reproduction.** The reproducible pipeline starts from the
 > vendored master CSV (`../../data/master_5x1_DPM_90plus.csv`) and is driven by `../../run_all.sh`.
 > The builders here read raw inputs that are **not** shipped in this repo (HMD is not
-> redistributable; several national files are login-gated or were downloaded to local paths). To
-> re-run them you must first obtain the raw sources per [`../../docs/data_sources.md`](../../docs/data_sources.md)
-> and repoint each script's input paths.
+> redistributable; several national files are login-gated). To re-run them, obtain the raw sources
+> per [`../../docs/data_sources.md`](../../docs/data_sources.md) and put them in `data/raw/` (git-ignored),
+> or point the `PAPERA_RAW` environment variable at the folder that holds them.
 
 ## What each builder adds
 
@@ -23,6 +23,8 @@ HMD sources. They are included for transparency and audit.
 | `build_canada_2025.py` | CAN 2025 (through ISO week 45, grossed up) | HMD STMF pooled file |
 | `update_canada_2025_complete.py` | Replaces CAN 2025 with full-year data | Statistics Canada table 13-10-0768 |
 | `build_ireland_2025.py` | IRL 2025 | CSO Ireland VSA07 |
+| `build_uk_scotland_ni_2023_2025.py` | `SCO_NRS`, `NIR_NISRA`, `GBR_NP_BUILT` 2023–2025 (Table S8 only) | NRS deaths time series and mid-year estimates; NISRA deaths and mid-year estimates; HMD STMF pooled file |
+| `refresh_hmd_exposures.py` | Replaces the `FRATNP` and `USA` HMD rows with the 27 August 2026 release. Writes `master_5x1_DPM_90plus_hmd20260827.csv`, which was then installed as the master. | HMD "all countries" bundle, unzipped |
 
 ## Order (if rebuilding from raw)
 
@@ -37,6 +39,8 @@ HMD sources. They are included for transparency and audit.
   → build_canada_2025.py
   → update_canada_2025_complete.py
   → build_ireland_2025.py
+  → build_uk_scotland_ni_2023_2025.py
+  → refresh_hmd_exposures.py      # then copy its output over the master
 ```
 
 Each builder is idempotent (it strips its own prior rows before re-appending) and writes a dated

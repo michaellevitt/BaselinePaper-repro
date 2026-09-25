@@ -14,7 +14,7 @@ Population 2025 is unchanged (already the extrapolated mid-year 2*P2024-P2023).
 Idempotent: re-derives from HMD 2024 + StatCan each run.  Backs up the master first.
 """
 import os, csv, shutil, datetime
-HERE=os.path.dirname(os.path.abspath(__file__)); ROOT=os.path.dirname(HERE)
+HERE=os.path.dirname(os.path.abspath(__file__)); ROOT=os.path.dirname(os.path.dirname(HERE))  # code/fetch -> repository root
 MASTER=os.path.join(ROOT,"data","master_5x1_DPM_90plus.csv")
 SC=os.path.join(ROOT,"scratchpad","stmf","13100768.csv")
 LOC="CAN"; SRC="STATCAN768_2025complete"; YEAR="2025"

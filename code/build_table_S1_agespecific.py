@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Table S6 + Figure-S2 data — TTa excess deaths under AGE-BAND-SPECIFIC vs ALL-AGE (common) slopes and
+Table S1 + Figure-S2 data — TTa excess deaths under AGE-BAND-SPECIFIC vs ALL-AGE (common) slopes and
 slopes-of-slopes, for the 10 countries with the most deaths, 2020-2025, for All / <65 / 65+.
 
 For each country and 5-year band a, the TTa baseline is
@@ -14,8 +14,8 @@ pre-pandemic years — identical to the main engine).  The two variants differ o
     fig_perband_trend_heterogeneity.py).
 
 Reads : data/master_5x1_DPM_90plus.csv, output/slope_of_slopes_CI.csv
-Writes: output/table_S6_agespecific_vs_allage.csv
-        docs/Table_S6_agespecific_vs_allage.xlsx
+Writes: output/table_S1_agespecific_vs_allage.csv
+        docs/Table_S1_agespecific_vs_allage.xlsx
 Prints: the paragraph-57 "vs" numbers, the 10-country totals, and every >50k divergence (comment 191).
 """
 import os, sys, csv, numpy as np
@@ -103,7 +103,7 @@ for code,disp in TEN:
 
 # ---- write CSV ----
 os.makedirs(OUTD,exist_ok=True)
-with open(os.path.join(OUTD,"table_S6_agespecific_vs_allage.csv"),"w",newline="") as f:
+with open(os.path.join(OUTD,"table_S1_agespecific_vs_allage.csv"),"w",newline="") as f:
     w=csv.writer(f)
     w.writerow(["code","name",
         "excess_All_agespecific","excess_All_allage","diff_All",
@@ -118,7 +118,7 @@ with open(os.path.join(OUTD,"table_S6_agespecific_vs_allage.csv"),"w",newline=""
 try:
     import openpyxl
     from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
-    wb=openpyxl.Workbook(); ws=wb.active; ws.title="Table S6"
+    wb=openpyxl.Workbook(); ws=wb.active; ws.title="Table S1"
     thin=Side(style="thin",color="BFBFBF"); B=Border(*(thin,)*4)
     HDR=PatternFill("solid",fgColor="1F4E79"); WH=Font(color="FFFFFF",bold=True)
     ws.append(["","","All ages","","<65","","65+",""])
@@ -133,7 +133,7 @@ try:
             c.border=B
             if c.column>2 and isinstance(c.value,int): c.number_format="#,##0"; c.alignment=Alignment(horizontal="right")
     ws.column_dimensions["B"].width=16
-    os.makedirs(DOCS,exist_ok=True); wb.save(os.path.join(DOCS,"Table_S6_agespecific_vs_allage.xlsx"))
+    os.makedirs(DOCS,exist_ok=True); wb.save(os.path.join(DOCS,"Table_S1_agespecific_vs_allage.xlsx"))
 except Exception as e:
     print("xlsx skipped:",e)
 
@@ -146,4 +146,4 @@ print(f"  {'TOTAL(10)':14}: {fm(tot[('agespec','All')][0])} vs {fm(tot[('common'
 print("\n=== comment-191: divergences >= 50k (country, stratum, age-spec, all-age, diff) ===")
 for d in sorted(big,key=lambda x:-abs(x[4])):
     print(f"  {d[0]:14} {d[1]:4}: {d[2]:>12,.0f} vs {d[3]:>12,.0f}  (diff {d[4]:+,.0f})")
-print("\nwrote output/table_S6_agespecific_vs_allage.csv, docs/Table_S6_agespecific_vs_allage.xlsx")
+print("\nwrote output/table_S1_agespecific_vs_allage.csv, docs/Table_S1_agespecific_vs_allage.xlsx")

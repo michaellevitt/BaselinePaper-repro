@@ -12,10 +12,11 @@ Top bands 90-94/95-99/100+ (Canada, NZ) and 90-94/95+ (Israel) collapse to 90+. 
 Writes rows to master and prints a validation table. Iceland copies ISL_EUROSTAT -> ISL.
 """
 import os, csv, json, numpy as np
-HERE=os.path.dirname(os.path.abspath(__file__)); ROOT=os.path.dirname(HERE); DATD=os.path.join(ROOT,"data")
+HERE=os.path.dirname(os.path.abspath(__file__)); ROOT=os.path.dirname(os.path.dirname(HERE))  # code/fetch -> repository root; DATD=os.path.join(ROOT,"data")
 FINE=["0","1-4","5-9","10-14","15-19","20-24","25-29","30-34","35-39","40-44","45-49","50-54","55-59","60-64","65-69","70-74","75-79","80-84","85-89","90+"]
 ASTART={b:(0 if b=="0" else 1 if b=="1-4" else int(b.split("-")[0].replace("+",""))) for b in FINE}
 MASTER=os.path.join(DATD,"master_5x1_DPM_90plus.csv")
+RAW=os.environ.get("PAPERA_RAW", os.path.join(ROOT, "data", "raw"))  # raw inputs; see code/fetch/README.md
 
 # ---- load master (for ratios + ISL_EUROSTAT + ISR 2016) ----
 rows=list(csv.DictReader(open(MASTER))); cols=rows[0].keys()
@@ -36,7 +37,7 @@ def top90(d):  # collapse any 90-94/95-99/95+/100+ into 90+
     keep["90+"]=nz; return keep
 
 # Australia (JSON) — bands already 0..90+
-AJ=json.load(open("/private/tmp/claude-501/-Users-levitt-Dropbox-win1-DB-NewProjects25-mortality-org-HMD-Excess-Death/e78eb5c5-d2a8-4782-876e-ecd463b8a89a/scratchpad/AUS_extract.json"))
+AJ=json.load(open(os.path.join(RAW,"AUS_extract.json")))
 for y in ["2022","2023","2024"]:
     dd=AJ["deaths_registrationYear_persons"][y]; pp=AJ["population_ERP_30June_persons"][y]
     DATA[("AUS",int(y))]={a:(dd[a],pp[a]) for a in FINE}
@@ -109,7 +110,7 @@ for (loc,y),d in DATA.items():
         if (loc,str(y),a) in existing: continue
         D,P=d[a]; new.append({"location":loc,"location_name":NAMES[loc],"source":"NATL_2025_build","year":str(y),
             "age":a,"age_start":str(ASTART[a]),"D_F":"","D_M":"","D_T":f"{D:.0f}","P_F":"","P_M":"","P_T":f"{P:.2f}",
-            "M_F":"","M_M":"","M_T":f"{1000*D/P:.4f}" if P else ""})
+            "M_F":"","M_M":"","M_T":f"{D/P:.6f}" if P else ""})
 with open(MASTER,"a",newline="") as f:
     w=csv.DictWriter(f,fieldnames=list(cols)); w.writerows(new)
 print(f"\nappended {len(new)} rows to master ({len(DATA)} location-years)")

@@ -30,7 +30,7 @@ ordered exactly as in the paper, built by `code/build_manuscript_tables.py`:
 | Table 1 | Per-population TTa slope and slope-of-slopes with p-values, shrinkage weight, STTa values | `option1_country_params.csv`, `slope_of_slopes_CI.csv` |
 | Table 2 | Pooled excess by period, age group and model, under age-band AND country-level trend modeling | `pooled_option1_by_period.csv`, `agespecific_vs_common_v1.csv` |
 | Table 3 | More- vs less-vulnerable populations | `model_option1_periods.csv` |
-| Table S1 | TTa excess, age-band vs country-level trends, 10 largest countries | `table_S6_agespecific_vs_allage.csv` |
+| Table S1 | TTa excess, age-band vs country-level trends, 10 largest countries | `table_S1_agespecific_vs_allage.csv` |
 | Table S2 | Excess deaths by single year | `pooled_option1_by_period.csv` |
 | Tables S3-S5 | Per-population P-scores: all ages, 65+, under 65 | `model_option1_periods.csv` |
 | Table S6 | Effect of age resolution on the 2020-2025 total | `age_resolution_option1.csv` |
@@ -38,9 +38,8 @@ ordered exactly as in the paper, built by `code/build_manuscript_tables.py`:
 | Table S8 | England and Wales vs the whole United Kingdom | `uk_vs_ew_full_family_2020_2025_v2_6dp.csv` |
 
 Also produced: `docs/Slope_of_slopes_heterogeneity_v1.xlsx` (Q and I-squared, Results text),
-`docs/Slope_of_slopes_CI_v1.xlsx`, `docs/Age_resolution_excess_Option1_v1.xlsx`,
-`docs/Table_S6_agespecific_vs_allage.xlsx` (the data behind Table S1, under its pre-renumbering
-name) and the working workbook `docs/PaperA_tables_twostep_v1.xlsx` (its own sheet names).
+`docs/Slope_of_slopes_CI_v1.xlsx`, `docs/Age_resolution_excess_Option1_v1.xlsx` and
+`docs/Table_S1_agespecific_vs_allage.xlsx` (the data behind Table S1).
 
 ## Intermediate CSVs / JSON (in `output/`)
 
@@ -55,7 +54,7 @@ name) and the working workbook `docs/PaperA_tables_twostep_v1.xlsx` (its own she
 | `model_option1_periods.csv`, `option1_country_params.csv` | `model_option1_periods_v2_agespecific.py` (final) | tables, figures |
 | `pooled_leecarter_by_period_v1.csv` | `model_leecarter_periods_v1.py` | Results text |
 | `age_resolution_option1.csv` | `build_option1_age_resolution.py` | Table S6 |
-| `table_S6_agespecific_vs_allage.csv` | `build_table_S6_agespecific.py` | Table S1 |
+| `table_S1_agespecific_vs_allage.csv` | `build_table_S1_agespecific.py` | Table S1 |
 | `slope_heterogeneity.csv` | `build_slope_heterogeneity_table.py` | Results text |
 
 ## Headline numbers (sanity check)

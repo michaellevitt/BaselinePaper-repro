@@ -74,7 +74,6 @@ explains this and runs them correctly; see `output/EXPECTED_OUTPUTS.md` for the 
 │   ├── master_5x1_DPM_90plus.csv   # the analytic dataset (see data/README.md for schema)
 │   ├── canonical_populations.csv   # the 38 study populations
 │   ├── vuln_covariates_38_v3.csv   # vulnerability groups + economic covariates
-│   ├── methods_comparison.json     # curated methods landscape (Table 1)
 │   └── README.md                   # schema + provenance
 ├── code/
 │   ├── excess_anchor_window.py     # master loader (deaths/exposures, HMD-basis calibration)
@@ -86,7 +85,7 @@ explains this and runs them correctly; see `output/EXPECTED_OUTPUTS.md` for the 
 │   ├── model_leecarter_periods_v1.py             # Lee-Carter contrast
 │   ├── uk_vs_ew_full_family.py     # Table S8
 │   ├── fig_*.py                    # the 6 manuscript figures
-│   ├── build_*.py                  # the table workbooks
+│   ├── build_*.py                  # the table workbooks (build_manuscript_tables.py: Tables 1–3, S1–S8)
 │   └── fetch/                      # raw → master builders (provenance; see fetch/README.md)
 ├── docs/
 │   ├── data_sources.md             # every raw source + how to obtain the gated ones
@@ -101,7 +100,7 @@ explains this and runs them correctly; see `output/EXPECTED_OUTPUTS.md` for the 
 The reproducible boundary is the **processed master dataset** (`data/master_5x1_DPM_90plus.csv`).
 Its France and United States rows were refreshed from the Human Mortality Database release of
 27 August 2026, which revised population estimates (most at ages 80+, and nearly every age band in
-the latest years); `code/refresh_hmd_exposures_v1.py` documents that step.
+the latest years); `code/fetch/refresh_hmd_exposures.py` documents that step.
 Everything from the master onward regenerates with one command. The raw national/HMD source files are
 **not** included: the Human Mortality Database prohibits redistribution, and several national sources
 are login-gated (e.g. CDC WONDER). The builders that assembled the master from raw sources are provided

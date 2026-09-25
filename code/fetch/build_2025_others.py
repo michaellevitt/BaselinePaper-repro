@@ -21,8 +21,7 @@ from collections import defaultdict
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import build_2025_eurostat_wk as B
 
-SCRATCH = ("/private/tmp/claude-501/-Users-levitt-Dropbox-win1-DB-NewProjects25-"
-           "mortality-org-HMD-Excess-Death/4618e575-676e-4bef-abdf-f884d5099d91/scratchpad")
+SCRATCH = os.environ.get("PAPERA_RAW", os.path.join(B.DATA, "raw"))  # raw inputs; see code/fetch/README.md
 
 def band_of_age(a, top):
     if a >= top: return f"{top}+"

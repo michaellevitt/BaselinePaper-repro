@@ -23,7 +23,7 @@ seasonal shape scaled to the 2025 level; population 2025 is extrapolated, not ob
 """
 import os, csv, shutil, datetime
 from collections import defaultdict
-HERE=os.path.dirname(os.path.abspath(__file__)); ROOT=os.path.dirname(HERE)
+HERE=os.path.dirname(os.path.abspath(__file__)); ROOT=os.path.dirname(os.path.dirname(HERE))  # code/fetch -> repository root
 MASTER=os.path.join(ROOT,"data","master_5x1_DPM_90plus.csv")
 STMF=os.path.join(ROOT,"..","21July2026_stmf.csv")
 LOC="CAN"; SRC="STMF_2425"; YEAR="2025"; LASTWK=45

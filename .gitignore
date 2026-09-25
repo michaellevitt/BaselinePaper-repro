@@ -27,3 +27,7 @@ docs/*.docx
 
 # Large raw source trees are NOT redistributed (see docs/data_sources.md).
 data/raw/
+
+# Dated backups the code/fetch/ builders write before modifying the master.
+data/old/
+data/*.bak.csv

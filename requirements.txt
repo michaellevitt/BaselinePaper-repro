@@ -1,14 +1,7 @@
 # Python dependencies for the Paper A reproducibility pipeline.
-# Tested with Python 3.11 (macOS, Homebrew python3).
-#
-# Core analysis engine needs only numpy/scipy; the rest are for figures,
-# spreadsheet/Word table builders, and image embedding.
+# Tested with Python 3.11-3.13 (macOS, Homebrew python3).
+# These four are everything the code imports outside the standard library.
 numpy>=1.24
 scipy>=1.10
 matplotlib>=3.7
-pandas>=2.0
-openpyxl>=3.1        # .xlsx table builders
-python-docx>=1.1     # .docx table/figure assembly (imported as `docx`)
-lxml>=4.9            # byte-preserving tracked-change docx edits
-XlsxWriter>=3.1      # some multi-sheet workbook builders
-Pillow>=10.0         # figure/image embedding
+openpyxl>=3.1        # .xlsx table workbooks
