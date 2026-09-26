@@ -109,7 +109,7 @@ hp=[plt.Line2D([0],[0],color=COBS,lw=2.4,label="Observed ln(rate)"),
     plt.Line2D([0],[0],color=CTT,lw=2.4,ls=(0,(3,2)),label="All-ages two-step trend, own"),
     plt.Line2D([0],[0],color=CST,lw=2.4,label="All-ages two-step trend, shrunk"),
     plt.Line2D([0],[0],color=CSP,lw=2.4,label="All-ages, slope-anchored"),
-    plt.Line2D([0],[0],color=CBW,lw=2.4,label="Primary STTa: standardised aggregate of the 20 band baselines"),
+    plt.Line2D([0],[0],color=CBW,lw=2.4,label="Age-band STTa: standardised aggregate of the 20 band baselines"),
     plt.Line2D([0],[0],color="#f0e6d8",lw=10,label="2020–2023 (pandemic)")]
 # legend starts at the left edge of the FIRST empty cell and grows rightwards across the
 # remaining ones, instead of being centred in the last cell and spilling past the grid

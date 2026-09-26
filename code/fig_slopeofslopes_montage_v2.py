@@ -122,7 +122,7 @@ handles=[plt.Line2D([],[],color=COL,lw=1.6,marker="o",ms=4,label="Observed pre-p
          plt.Line2D([],[],color=CTT,lw=2.2,label="All-ages two-step trend, own"),
          plt.Line2D([],[],color=CST,lw=2.0,label="All-ages two-step trend, shrunk"),
          plt.Line2D([],[],color=CSP,lw=2.4,label="All-ages, slope-anchored"),
-         plt.Line2D([],[],color=CBW,lw=2.2,label="Primary STTa: deaths-weighted mean of the 20 band trends"),
+         plt.Line2D([],[],color=CBW,lw=2.2,label="Age-band STTa: deaths-weighted mean of the 20 band trends"),
          plt.Line2D([],[],color=CSP,marker="*",ms=13,ls="none",mec="black",mew=0.6,label="Observed slope for 2019, 2024 and 2025 data points")]
 # legend starts at the left edge of the FIRST empty cell and grows rightwards across the
 # remaining ones, instead of being centred in the last cell and spilling past the grid (match Fig S1)
